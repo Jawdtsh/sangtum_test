@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-//use Illuminate\Http\Request;
+use App\Traits\VerifiableCodeTrait;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request)
+
+    public function register(RegisterRequest $request): JsonResponse
     {
 
         // Handle file uploads
@@ -39,6 +43,34 @@ class AuthController extends Controller
     }
 
 
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $login = $request->login;
+        $password = $request->password;
+
+        $user = User::where('email', $login)->orWhere('phone_number', $login)->first();
+
+        //Check the user and his password if they are correct.
+        if (!$user || !Hash::check($password, $user->password)) {
+            return response()->json(['message' => 'بيانات تسجيل الدخول غير صحيحة'], 401);
+        }
+        // Create API token for the user
+        $token = $user->createToken('Personal Access Token')->plainTextToken;
+
+        // Return success response
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        // Revoke the token that was used to authenticate the current request
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'تم تسجيل الخروج بنجاح']);
+    }
 
 
 }
