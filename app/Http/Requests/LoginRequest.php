@@ -22,7 +22,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'login'    => 'required|string',
+            'identifier'    => 'required|string',
             'password' => 'required|string',
         ];
     }
@@ -30,8 +30,8 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'login.required'    => 'البريد الإلكتروني أو رقم الهاتف مطلوب.',
-            'login.string'      => 'البريد الإلكتروني أو رقم الهاتف يجب أن يكون نصًا.',
+            'identifier.required'    => 'البريد الإلكتروني أو رقم الهاتف مطلوب.',
+            'identifier.string'      => 'البريد الإلكتروني أو رقم الهاتف يجب أن يكون نصًا.',
             'password.required' => 'كلمة المرور مطلوبة.',
             'password.string'   => 'كلمة المرور يجب أن تكون نصًا.',
         ];
